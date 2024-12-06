@@ -111,7 +111,7 @@ def clean_code(df1):
 # =====================================================================
 # Loading and Cleaning Data
 # =====================================================================
-df = pd.read_csv('../dataset/train.csv')
+df = pd.read_csv('dataset/train.csv')
 df1 = clean_code(df)
 
 
@@ -119,7 +119,7 @@ df1 = clean_code(df)
 # Barra lateral
 # =====================================================================
 
-image = Image.open('../images/bob.png')
+image = Image.open('images/bob.png')
 st.sidebar.image(image, width=120)
 
 st.sidebar.markdown('# Cury Company')
