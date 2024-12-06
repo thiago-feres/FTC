@@ -112,8 +112,8 @@ clima ensoladao.
 
 Painel online, hospedado em um Cloud e disponível para acesso em
 qualquer dispositivo conectado à internet.
-O painel pode ser acessado através desse link: https://project-curry-
-company.streamlit.app/
+O painel pode ser acessado através desse link: 
+https://thiago-feres-curry-company.streamlit.app/  
 
 # 6. Conclusão
 
