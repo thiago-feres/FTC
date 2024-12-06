@@ -76,7 +76,7 @@ st.sidebar.markdown("""---""")
 traffic_options = st.sidebar.multiselect(
     'Quais as condicoes do transito',
     ['Low', 'Medium', 'High', 'Jam'],
-    default='Low')
+    default=('Low', 'Medium', 'High', 'Jam'))
 
 st.sidebar.markdown("""---""")
 st.sidebar.markdown('### Powered by Thiago Feres')
@@ -154,29 +154,14 @@ with tab1:
 
     with st.container():
         st.markdown("""---""")
-        st.title('Tempo medio de entrega por cidade')
-        cols = ['Restaurant_latitude', 'Restaurant_longitude', 'Delivery_location_latitude', 'Delivery_location_longitude']
-        df1['distance'] = df1.loc[:, cols].apply(
-            lambda x: haversine(
-            (x['Restaurant_latitude'], x['Restaurant_longitude']),
-            (x['Delivery_location_latitude'], x['Delivery_location_longitude'])
-            ), 
-    axis=1
-)
-        avg_distance = df1.loc[:, ['City', 'distance']].groupby('City').mean().reset_index()
-        fig = go.Figure(data=[go.Pie(labels=avg_distance['City'], values=avg_distance['distance'], pull=[0, 0.1,0])])
-        st.plotly_chart(fig)     
-
-    with st.container():
-        st.markdown("""---""")
-        st.title('Distribuicao do tempo')
-        
         col1, col2 = st.columns(2)
+        
         with col1:
+            st.markdown('##### Tempo medio de entrega por cidade')
             delivery_avg_std_by_city = df1.loc[:, ['City', 'Time_taken(min)']].groupby(['City']).agg({'Time_taken(min)': ['mean','std']})
             delivery_avg_std_by_city.columns = ['avg_time', 'std_time']
             delivery_avg_std_by_city = delivery_avg_std_by_city.reset_index()
-
+    
             fig = go.Figure()
             fig.add_trace(go.Bar(name='Control', 
                                  x=delivery_avg_std_by_city['City'], 
@@ -185,8 +170,35 @@ with tab1:
             
             fig.update_layout(barmode='group')
             st.plotly_chart(fig)
+
+        with col2:
+            st.markdown('##### Distribuicao da distancia')
+            delivery_avg_std_by_city = df1.loc[:, ['Time_taken(min)', 'City', 'Type_of_order']].groupby(['City', 'Type_of_order']).agg({'Time_taken(min)': ['mean','std']})
+            delivery_avg_std_by_city.columns = ['avg_time', 'std_time']
+            delivery_avg_std_by_city = delivery_avg_std_by_city.reset_index()
+            
+            st.dataframe(delivery_avg_std_by_city)
+            
+
+
+    with st.container():
+        st.markdown("""---""")
+        st.title('Distribuicao do tempo')
         
-        
+        col1, col2 = st.columns(2)
+        with col1:
+            cols = ['Restaurant_latitude', 'Restaurant_longitude', 'Delivery_location_latitude', 'Delivery_location_longitude']
+            df1['distance'] = df1.loc[:, cols].apply(
+                lambda x: haversine(
+                (x['Restaurant_latitude'], x['Restaurant_longitude']),
+                (x['Delivery_location_latitude'], x['Delivery_location_longitude'])
+            ), 
+    axis=1
+)
+            avg_distance = df1.loc[:, ['City', 'distance']].groupby('City').mean().reset_index()
+            fig = go.Figure(data=[go.Pie(labels=avg_distance['City'], values=avg_distance['distance'], pull=[0, 0.1,0])])
+            st.plotly_chart(fig)     
+
         with col2:
             delivery_avg_std_by_city = df1.loc[:, ['Time_taken(min)', 'City', 'Road_traffic_density']].groupby(['City', 'Road_traffic_density']).agg({'Time_taken(min)': ['mean','std']})
             delivery_avg_std_by_city.columns = ['avg_time', 'std_time']
@@ -196,16 +208,7 @@ with tab1:
                                                                color='std_time', color_continuous_scale='RdBu',
                                                                color_continuous_midpoint=np.average(delivery_avg_std_by_city['std_time']))
             st.plotly_chart(fig)
-    
-
-    
-
-    with st.container():
-        st.markdown("""---""")
-        st.title('Distribuicao da distancia')
-
-
-
+        
 
 
 
